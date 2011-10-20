@@ -1,8 +1,10 @@
-/*
- * FULMemoryPoolTester.c
+/**
+ * @file   FULMemoryPoolTester.c
  *
- *  Created on: Oct 19, 2011
- *      Author: user
+ * @date   Oct 19, 2011
+ * @author WangLiang
+ * @email  WangLiangCN@live.com
+ * @brief  Test program for FULMemoryPool.
  */
 
 #include "FULMemoryPool/MemoryPool.h"
@@ -13,15 +15,18 @@
 #endif
 
 #define TEST_MALLOC_TIMES 999
-#define TEST_RETRY_TIMES 9999
+#define TEST_RETRY_TIMES 99999
 
 int FULMemoryPoolTester()
 {
+	// To compute used time.
 	struct timeval startTime, endTime;
 	unsigned long long costTime = 0ULL;
 
+	// To store available memory address got from system or pool.
 	char **pStrings = (char **)malloc(sizeof(char *) * TEST_MALLOC_TIMES);
 
+	// System default malloc/free test.
 	PrintLog("Now testing system default malloc/free");
 	gettimeofday(&startTime, NULL);
 	for (int i=0; i<TEST_RETRY_TIMES; ++i)
@@ -42,6 +47,7 @@ int FULMemoryPoolTester()
 	printf("System default malloc/free tested, malloc and free %d strings for %d times, cost %llu us.\n",
 			TEST_MALLOC_TIMES, TEST_RETRY_TIMES, costTime);
 
+	// Memory pool Malloc/Free test.
 	PrintLog("Now testing memory pool Malloc/Free");
 	gettimeofday(&startTime, NULL);
 	MemoryPool_t *pPool = CreateMemoryPool(DEFAULT_STRING_SIZE);

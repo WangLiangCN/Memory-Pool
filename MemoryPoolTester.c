@@ -1,23 +1,14 @@
 /*
- * MemoryPoolTester.c
+ * @file   MemoryPoolTester.c
  *
- *  Created on: Oct 19, 2011
- *      Author: wangliang
+ * @date   Oct 19, 2011
+ * @author WangLiang
+ * @email  WangLiangCN@live.com
+ *
+ * @brief Test all kind of memory pool.
  */
 
 #include "MemoryPool.h"
-#include <time.h>
-
-void GenerateRandStr(char *str, int strLen)
-{
-  srand(time(NULL) + rand());
-  int i;
-  for (i = 0; i  < strLen; i++)
-  {
-    str[i] = rand() %94 + 32;
-  }
-  str[i] = '\0';
-}
 
 int main()
 {
@@ -40,7 +31,7 @@ int main()
 #elif defined (TEST_VABMemoryPool)
 	ret = VABMemoryPoolTester();
 #else
-	printf("Please define one of macros to enable related memory pool tester, define it in MemoryPool.h\n");
+	PrintLog("Please define one of macros to enable related memory pool tester, please define it in MemoryPool.h\n");
 #endif
 
 	return ret;

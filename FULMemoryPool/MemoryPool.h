@@ -6,6 +6,39 @@
  * @email  WangLiangCN@live.com
  *
  * @brief
+ *
+ * There are available block in memory pool:
+ *
+ *                pFristAvailable
+ *               +-------+ ------                +-------+ ------
+ *    Header     |       |   |         Next      |       |   |        Next
+ *   ------->    | Union |  Next     -------->   | Union |  Next    ------->   ......
+ *               |       |   |                   |       |   |
+ *               |       |   |                   |       |   |
+ *               +-------+ ------                +-------+ ------
+ *               |       |                       |       |
+ *               |       |                       |       |
+ *               |  ...  |                       |  ...  |
+ *               |       |                       |       |
+ *               |       |                       |       |
+ *               +-------+                       +-------+
+ *
+ * Get a available block from memory pool:
+ *
+ *         --------------------------
+ *         |                        |             pFristAvailable
+ *         |     +-------+          |            +-------+ ------
+ *  Header |     |       |          |  Next      |       |   |        Next
+ * ---------     |       |          --------->   | Union |  Next    ------->   ......
+ *               |       |                       |       |   |
+ *               |       |                       |       |   |
+ *               | USER  |                       +-------+ ------
+ *               |       |                       |       |
+ *               | DATA  |                       |       |
+ *               |       |                       |  ...  |
+ *               |       |                       |       |
+ *               |       |                       |       |
+ *               +-------+                       +-------+
  */
 
 #ifndef MEMORYPOOL_H_
@@ -13,25 +46,58 @@
 
 #include "../CProjectDfn.h"
 
+/**
+ * @brief To build a available memory list.
+ */
 typedef union Node
 {
-	union Node *pNext;
-	char data[1];
+	union Node *pNext;     ///< Next available memory list.
+	char data[1];          ///< Address of this union structure.
 }Node_t;
 
+/**
+ * @brief Information about a memory pool.
+ */
 typedef struct Head
 {
-	unsigned int uMaxSize;
-	Node_t *pFirstAvailable;
+	unsigned int uMaxSize;      ///< Every memory block have this length, maximum length of string with '\0'.
+	Node_t *pFirstAvailable;    ///< The first available memory block, if NULL, no available block.
 }Head_t;
 
+/**
+ * @brief Information of a memory pool.
+ */
 typedef Head_t MemoryPool_t;
 
+/**
+ * @brief Create a empty pool.
+ *
+ *   Each block in this pool have minimum size of sizeof(union Node), will up to it if smaller than.
+ *
+ * @param uMaxSize Every memory block have this length, maximum length of string with '\0' can be in.
+ * @return Created memory pool.
+ */
 MemoryPool_t *CreateMemoryPool(unsigned int uMaxSize);
+
+/**
+ * @brief Destroy a memory pool.
+ *
+ * @param pPoll when finished, this will be NULL.
+ * @note Make sure every address get from this memory pool is released by Free().
+ */
 void DestroyMemoryPool(MemoryPool_t **pPool);
 
+/**
+ * @brief Get a block from memory pool.
+ *
+ *   This block got from memory pool will out of pool's control, unless back it to pool.
+ *
+ * @param pPool Which pool to get from, there maybe many pools can get different size of memory block.
+ * @return Address of not used memory block.
+ */
 inline void *Malloc(MemoryPool_t *pPool)
 {
+	assert(NULL != pPool);
 	void *pPtr = NULL;
 
 	if (NULL != pPool->pFirstAvailable)
@@ -44,13 +110,20 @@ inline void *Malloc(MemoryPool_t *pPool)
 		pPtr = malloc(pPool->uMaxSize);
 		if (NULL == pPtr)
 		{
-			PrintWarning("Failed to malloc memory from system.");
+			PrintError("Failed to malloc memory from system.");
 		}
 	}
 
 	return pPtr;
 }
 
+/**
+ * @brief Back a memory block to pool.
+ *
+ * @param pPool Which pool to back.
+ * @param pPtr Address of memory block.
+ * @note Make sure memory pool didn't been destroy, if already, it will free this block to system.
+ */
 inline void Free(MemoryPool_t *pPool, void *pPtr)
 {
 	Node_t *pFreeNode = (Node_t *)pPtr;

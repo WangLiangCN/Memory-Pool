@@ -5,7 +5,7 @@
  * @author WangLiang
  * @email  WangLiangCN@live.com
  *
- * @brief Definition to test all kind of memory pool.
+ * @brief  Definition to test all kind of memory pool.
  */
 
 #ifndef MEMORY_POOL_TESTER_H

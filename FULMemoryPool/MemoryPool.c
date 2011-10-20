@@ -16,13 +16,13 @@
  *
  *   Each block in this pool have minimum size of sizeof(union Node), will up to it if smaller than.
  *
- * @param uMaxSize Every memory block have this length, maximum length of string with '\0' can be in.
+ * @param uBlockSize Every memory block have this length, maximum length of string with '\0' can be in.
  * @return Created memory pool.
  */
-MemoryPool_t *CreateMemoryPool(unsigned int uMaxSize)
+MemoryPool_t *CreateMemoryPool(unsigned int uBlockSize)
 {
 	Head_t *pHead = (Head_t *)malloc(sizeof(Head_t));
-	pHead->uMaxSize = uMaxSize > sizeof(Node_t) ? uMaxSize : sizeof(Node_t);
+	pHead->uBlockSize = uBlockSize > sizeof(Node_t) ? uBlockSize : sizeof(Node_t);
 	pHead->pFirstAvailable = NULL;
 
 	return pHead;

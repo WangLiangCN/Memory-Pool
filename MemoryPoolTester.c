@@ -5,7 +5,7 @@
  * @author WangLiang
  * @email  WangLiangCN@live.com
  *
- * @brief Test all kind of memory pool.
+ * @brief  Test all kind of memory pool.
  */
 
 #include "MemoryPool.h"

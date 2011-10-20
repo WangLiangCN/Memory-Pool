@@ -9,11 +9,11 @@
  *
  * There are available block in memory pool:
  *
- *                pFristAvailable
- *               +-------+ ------                +-------+ ------
- *    Header     |       |   |         Next      |       |   |        Next
- *   ------->    | Union |  Next     -------->   | Union |  Next    ------->   ......
- *               |       |   |                   |       |   |
+ *         data   pFristAvailable          data
+ *        -----> +-------+ ------         -----> +-------+ ------
+ *               |       |   |                   |       |   |        Next
+ *    Header     | Union |  Next        Next     | Union |  Next    ------->   ......
+ *   ------->    |       |   |        -------->  |       |   |
  *               |       |   |                   |       |   |
  *               +-------+ ------                +-------+ ------
  *               |       |                       |       |
@@ -25,11 +25,11 @@
  *
  * Get a available block from memory pool:
  *
- *         --------------------------
- *         |                        |             pFristAvailable
- *         |     +-------+          |            +-------+ ------
- *  Header |     |       |          |  Next      |       |   |        Next
- * ---------     |       |          --------->   | Union |  Next    ------->   ......
+ *         ----------------------
+ *         |                    |          data   pFristAvailable
+ *         |     +-------+      |         -----> +-------+ ------
+ *  Header |     |       |      |  Next          |       |   |        Next
+ * ---------     |       |      ------------->   | Union |  Next    ------->   ......
  *               |       |                       |       |   |
  *               |       |                       |       |   |
  *               | USER  |                       +-------+ ------
@@ -60,7 +60,7 @@ typedef union Node
  */
 typedef struct Head
 {
-	unsigned int uMaxSize;      ///< Every memory block have this length, maximum length of string with '\0'.
+	unsigned int uBlockSize;    ///< Every memory block have this length, maximum length of string with '\0'.
 	Node_t *pFirstAvailable;    ///< The first available memory block, if NULL, no available block.
 }Head_t;
 
@@ -74,10 +74,10 @@ typedef Head_t MemoryPool_t;
  *
  *   Each block in this pool have minimum size of sizeof(union Node), will up to it if smaller than.
  *
- * @param uMaxSize Every memory block have this length, maximum length of string with '\0' can be in.
+ * @param uBlockSize Every memory block have this length, maximum length of string with '\0' can be in.
  * @return Created memory pool.
  */
-MemoryPool_t *CreateMemoryPool(unsigned int uMaxSize);
+MemoryPool_t *CreateMemoryPool(unsigned int uBlockSize);
 
 /**
  * @brief Destroy a memory pool.
@@ -107,7 +107,7 @@ inline void *Malloc(MemoryPool_t *pPool)
 	}
 	else
 	{
-		pPtr = malloc(pPool->uMaxSize);
+		pPtr = malloc(pPool->uBlockSize);
 		if (NULL == pPtr)
 		{
 			PrintError("Failed to malloc memory from system.");

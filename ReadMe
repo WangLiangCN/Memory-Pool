@@ -1,0 +1,25 @@
+/**
+ * @file   README
+ *
+ * @date   Oct 19, 2011
+ * @author Wang Liang
+ * @email  WangLiangCN@live.com
+ *
+ * @brief There are many kinds of memory pools, different of them is suitable for different projects.
+ */
+ 
+  There are mainly three attributes for memory pool:
+  - Can store variable length of string or fixed length of string.
+  - Able to recycle memory automatically when running or not.
+  - Store in list style or block style.
+  
+  So, there implemented eight kinds of memory pool in each directory, we mark them as three attributes'
+first letter, so here lists all eight kinds of memory pools:
+  - FULMemoryPool/      Fixed length, Unable to recycle, List style.
+  - VULMemoryPool/      Variable length, Unable to recycle, List style.
+  - FALMemoryPool/      Fixed length, Able to recycle, List style.
+  - VALMemoryPool/      Variable length, Able to recycle, List style.
+  - FUBMemoryPool/      Fixed length, Unable to recycle, Block store style.
+  - VUBMemoryPool/      Variable length, Unable to recycle, Block store style.
+  - FABMemoryPool/      Fixed length, Able to recycle, Block store style.
+  - VABMemoryPool/      Variable length, Able to recycle, Block store style.

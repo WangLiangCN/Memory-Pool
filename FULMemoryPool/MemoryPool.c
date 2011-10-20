@@ -14,13 +14,12 @@ MemoryPool_t *CreateMemoryPool(unsigned int uMaxSize)
 {
 	Head_t *pHead = (Head_t *)malloc(sizeof(Head_t));
 	pHead->uMaxSize = uMaxSize > sizeof(Node_t) ? uMaxSize : sizeof(Node_t);
-	pHead->uAvailable = 0;
 	pHead->pFirstAvailable = NULL;
 
 	return pHead;
 }
 
-void DestoryMemoryPool(MemoryPool_t **pPool)
+void DestroyMemoryPool(MemoryPool_t **pPool)
 {
 	Node_t *pNode = (*pPool)->pFirstAvailable;
 	Node_t *pPreNode = NULL;
@@ -32,21 +31,25 @@ void DestoryMemoryPool(MemoryPool_t **pPool)
 		free(pPreNode);
 	}
 	free(*pPool);
+	*pPool = NULL;
 }
 
 void *Malloc(MemoryPool_t *pPool)
 {
 	void *pPtr = NULL;
 
-	if (pPool->uAvailable > 0)
+	if (NULL != pPool->pFirstAvailable)
 	{
 		pPtr = &(pPool->pFirstAvailable->data);
-		-- pPool->uAvailable;
 		pPool->pFirstAvailable = pPool->pFirstAvailable->pNext;
 	}
 	else
 	{
-		pPtr = my_malloc(pPool->uMaxSize, __FUNCTION__, __LINE__);
+		pPtr = malloc(pPool->uMaxSize);
+		if (NULL == pPtr)
+		{
+			PrintWarning("Failed to malloc memory from system.");
+		}
 	}
 
 	return pPtr;
@@ -56,7 +59,13 @@ void Free(MemoryPool_t *pPool, void *pPtr)
 {
 	Node_t *pFreeNode = (Node_t *)pPtr;
 
+	if (NULL == pPool)
+	{
+		PrintWarning("A ptr will be freed but memory pool already been destroy.");
+		free(pPtr);
+		return;
+	}
+
 	pFreeNode->pNext = pPool->pFirstAvailable;
 	pPool->pFirstAvailable = pFreeNode;
-	++ pPool->uAvailable;
 }

@@ -131,6 +131,13 @@ typedef signed char byte;
 //! Default align style for structure/union.
 #define __DEFAULT_ALIGN__ //__attribute_aligned__
 
+//! Print log message, different functions in different platform.
+extern void PrintLog(const char *msg);
+//! Print warning message.
+extern void PrintWarning(const char *msg);
+//! Print error message.
+extern void PrintError(const char *msg);
+
 //+++++++++++++++++++++++++++++++++  Memory management macros ++++++++++++++++++++++++++++++++++
 
 #ifdef _DEBUGMODEON
@@ -253,7 +260,7 @@ extern void AddSlashAtPathEnd(char* path)
        __THROW __attribute_pure__ __attribute__ ((nonnull (1)));
 
 //! If [path] is ended by slash, delete it, or it did nothing.
-extern bool_t RemoveSlashAtPathEnd(char *path)
+extern void RemoveSlashAtPathEnd(char *path)
        __THROW __attribute_pure__ __attribute__ ((nonnull (1)));
 
 //! Append path [y] to [x], make sure [x] have enough space to append [y].

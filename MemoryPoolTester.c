@@ -6,6 +6,18 @@
  */
 
 #include "MemoryPool.h"
+#include <time.h>
+
+void GenerateRandStr(char *str, int strLen)
+{
+  srand(time(NULL) + rand());
+  int i;
+  for (i = 0; i  < strLen; i++)
+  {
+    str[i] = rand() %94 + 32;
+  }
+  str[i] = '\0';
+}
 
 int main()
 {

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -std=c99
 TARGET = ./memoryPoolTester
 SUBDIR = FABMemoryPool FALMemoryPool FUBMemoryPool FULMemoryPool VABMemoryPool VALMemoryPool VUBMemoryPool VULMemoryPool
 SOURCES = $(wildcard *.c) $(shell find $(SUBDIR) -name '*.c')

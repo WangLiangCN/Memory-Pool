@@ -22,4 +22,9 @@
 //#define TEST_FABMemoryPool
 //#define TEST_VABMemoryPool
 
+//! Make a random string.
+extern void GenerateRandStr(char *str, int strLen);
+
+extern int FULMemoryPoolTester();
+
 #endif /* MEMORY_POOL_TESTER_H */

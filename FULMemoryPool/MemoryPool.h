@@ -22,10 +22,14 @@ typedef union Node
 typedef struct Head
 {
 	unsigned int uMaxSize;
-	unsigned int uAvailable;
 	Node_t *pFirstAvailable;
 }Head_t;
 
 typedef Head_t MemoryPool_t;
+
+MemoryPool_t *CreateMemoryPool(unsigned int uMaxSize);
+void DestroyMemoryPool(MemoryPool_t **pPool);
+void *Malloc(MemoryPool_t *pPool);
+void Free(MemoryPool_t *pPool, void *pPtr);
 
 #endif /* MEMORYPOOL_H_ */

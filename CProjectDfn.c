@@ -33,11 +33,11 @@ void *my_malloc(unsigned int uSize, const char *pszFunc, unsigned int uLine)
 	++allocateCount;
 	if (IS_NOT_NULL(pMem))
 	{
-		printf("MALLOC at %p, In func:%s, line:%d, allocated %d bytes.\n", pMem, pszFunc, uLine, uSize);
+		//printf("MALLOC at %p, In func:%s, line:%d, allocated %d bytes.", pMem, pszFunc, uLine, uSize);
 	}
 	else
 	{
-		printf(":::WARNING::: Allocate memory failed!\n");
+		printf("Allocate memory failed!");
 	}
 
 	return pMem;
@@ -52,7 +52,7 @@ void *my_malloc(unsigned int uSize, const char *pszFunc, unsigned int uLine)
 void my_free(void *pPtr, const char *pszFunc, unsigned int uLine)
 {
 	++freeCount;
-	printf("FREE at %p, In func:%s, line:%d\n", pPtr, pszFunc, uLine);
+	//printf("FREE at %p, In func:%s, line:%d", pPtr, pszFunc, uLine);
 	free(pPtr);
 }
 
@@ -70,11 +70,35 @@ void ResetMemoryCounter()
  */
 void PrintMemoryManagementInf()
 {
-	printf("Memory management information: Allocated %d times, Freed %d times.\n", allocateCount, freeCount);
+	printf("Memory management information: Allocated %d times, Freed %d times.", allocateCount, freeCount);
 	ResetMemoryCounter();
 }
 
 #endif
+
+/**
+ * @brief Print log, different functions in different platform.
+ */
+void PrintLog(const char *msg)
+{
+	printf("%s\n", msg);
+}
+
+/**
+ * @brief Print warning message.
+ */
+void PrintWarning(const char *msg)
+{
+	printf(":::WARNING::: %s\n", msg);
+}
+
+/**
+ * @brief Print error message.
+ */
+void PrintError(const char *msg)
+{
+	printf(":::ERROR::: %s\n", msg);
+}
 
 /**
  * @brief Check [path] is ended by '/', if not, add it.
@@ -99,9 +123,8 @@ void AddSlashAtPathEnd(char* path)
  * @brief Check [path] is ended by '/', if yes, delete it.
  *
  * @param path String want to check with.
- * @return If path is ended by slash, YES will be returned and it will delete it, or NO is returned.
  */
-bool_t RemoveSlashAtPathEnd(char *path)
+void RemoveSlashAtPathEnd(char *path)
 {
 	// Get the last position.
 	int lastPosition = strlen(path)-1;
@@ -109,9 +132,7 @@ bool_t RemoveSlashAtPathEnd(char *path)
 	if (PATH_DIDIVDER == path[lastPosition])
 	{
 		path[lastPosition] = CHAR_ARRAY_END;
-		return YES;
 	}
-	return NO;
 }
 
 /**

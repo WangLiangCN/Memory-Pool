@@ -33,39 +33,3 @@ void DestroyMemoryPool(MemoryPool_t **pPool)
 	free(*pPool);
 	*pPool = NULL;
 }
-
-void *Malloc(MemoryPool_t *pPool)
-{
-	void *pPtr = NULL;
-
-	if (NULL != pPool->pFirstAvailable)
-	{
-		pPtr = &(pPool->pFirstAvailable->data);
-		pPool->pFirstAvailable = pPool->pFirstAvailable->pNext;
-	}
-	else
-	{
-		pPtr = malloc(pPool->uMaxSize);
-		if (NULL == pPtr)
-		{
-			PrintWarning("Failed to malloc memory from system.");
-		}
-	}
-
-	return pPtr;
-}
-
-void Free(MemoryPool_t *pPool, void *pPtr)
-{
-	Node_t *pFreeNode = (Node_t *)pPtr;
-
-	if (NULL == pPool)
-	{
-		PrintWarning("A ptr will be freed but memory pool already been destroy.");
-		free(pPtr);
-		return;
-	}
-
-	pFreeNode->pNext = pPool->pFirstAvailable;
-	pPool->pFirstAvailable = pFreeNode;
-}

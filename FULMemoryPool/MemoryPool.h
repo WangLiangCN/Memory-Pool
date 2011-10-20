@@ -11,7 +11,7 @@
 #ifndef MEMORYPOOL_H_
 #define MEMORYPOOL_H_
 
-#include "../MemoryPool.h"
+#include "../CProjectDfn.h"
 
 typedef union Node
 {
@@ -29,7 +29,41 @@ typedef Head_t MemoryPool_t;
 
 MemoryPool_t *CreateMemoryPool(unsigned int uMaxSize);
 void DestroyMemoryPool(MemoryPool_t **pPool);
-void *Malloc(MemoryPool_t *pPool);
-void Free(MemoryPool_t *pPool, void *pPtr);
+
+inline void *Malloc(MemoryPool_t *pPool)
+{
+	void *pPtr = NULL;
+
+	if (NULL != pPool->pFirstAvailable)
+	{
+		pPtr = &(pPool->pFirstAvailable->data);
+		pPool->pFirstAvailable = pPool->pFirstAvailable->pNext;
+	}
+	else
+	{
+		pPtr = malloc(pPool->uMaxSize);
+		if (NULL == pPtr)
+		{
+			PrintWarning("Failed to malloc memory from system.");
+		}
+	}
+
+	return pPtr;
+}
+
+inline void Free(MemoryPool_t *pPool, void *pPtr)
+{
+	Node_t *pFreeNode = (Node_t *)pPtr;
+
+	if (NULL == pPool)
+	{
+		PrintWarning("A ptr will be freed but memory pool already been destroy.");
+		free(pPtr);
+		return;
+	}
+
+	pFreeNode->pNext = pPool->pFirstAvailable;
+	pPool->pFirstAvailable = pFreeNode;
+}
 
 #endif /* MEMORYPOOL_H_ */

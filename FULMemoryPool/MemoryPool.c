@@ -5,7 +5,8 @@
  * @author WangLiang
  * @email  WangLiangCN@live.com
  *
- * @brief Create and destroy memory pool, due to frequent use of Malloc() and Free(), so make it
+ * @brief  Fixed length, Unable to recycle, List style memory pool.
+ *   Create and destroy memory pool, due to frequent use of Malloc() and Free(), so make it
  * inline and defined in MemoryPool.h
  */
 

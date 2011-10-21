@@ -5,7 +5,7 @@
  * @author WangLiang
  * @email  WangLiangCN@live.com
  *
- * @brief
+ * @brief Fixed length, Unable to recycle, List style memory pool.
  *
  * There are available block in memory pool:
  *
@@ -27,12 +27,12 @@
  *
  *         ----------------------
  *         |                    |          data   pFristAvailable
- *         |     +-------+      |         -----> +-------+ ------
- *  Header |     |       |      |  Next          |       |   |        Next
- * ---------     |       |      ------------->   | Union |  Next    ------->   ......
- *               |       |                       |       |   |
- *               |       |                       |       |   |
- *               | USER  |                       +-------+ ------
+ *         |  -> +-------+      |         -----> +-------+ ------
+ *  Header |  |  |       |      |  Next          |       |   |        Next
+ * ---------  |  |       |      ------------->   | Union |  Next    ------->   ......
+ *            |  |       |                       |       |   |
+ *  User_Ptr  |  |       |                       |       |   |
+ * ------------  | USER  |                       +-------+ ------
  *               |       |                       |       |
  *               | DATA  |                       |       |
  *               |       |                       |  ...  |

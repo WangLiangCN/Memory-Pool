@@ -14,18 +14,23 @@
 #include "CProjectDfn.h"
 #include <time.h>
 
+#define MALLOC_MAX_LEN (1*1024)
+
+#define TEST_MALLOC_TIMES 9999
+#define TEST_RETRY_TIMES 9999
+
 /**
  * @brief Test one kind of memory pool, enable it and program will test this kind of pool.
  * @note Enable one of them at one time.
  */
-#define TEST_FULMemoryPool
-//#define TEST_VULMemoryPool
-//#define TEST_FALMemoryPool
-//#define TEST_VALMemoryPool
-//#define TEST_FUBMemoryPool
-//#define TEST_VUBMemoryPool
-//#define TEST_FABMemoryPool
-//#define TEST_VABMemoryPool
+//#define ENABLE_FULMemoryPool
+#define ENABLE_VULMemoryPool
+//#define ENABLE_FALMemoryPool
+//#define ENABLE_VALMemoryPool
+//#define ENABLE_FUBMemoryPool
+//#define ENABLE_VUBMemoryPool
+//#define ENABLE_FABMemoryPool
+//#define ENABLE_VABMemoryPool
 
 /**
  * @brief Make a random string.
@@ -45,5 +50,6 @@ inline void GenerateRandStr(char *str, int strLen)
 }
 
 extern int FULMemoryPoolTester();
+extern int VULMemoryPoolTester();
 
 #endif /* MEMORY_POOL_TESTER_H */

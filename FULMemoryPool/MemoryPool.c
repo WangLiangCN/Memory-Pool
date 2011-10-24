@@ -10,6 +10,10 @@
  * inline and defined in MemoryPool.h
  */
 
+// The following macro designed for test purpose only, delete it when using.
+#include "../MemoryPoolTester.h"
+#ifdef ENABLE_FULMemoryPool
+
 #include "MemoryPool.h"
 
 /**
@@ -51,3 +55,5 @@ void DestroyMemoryPool(MemoryPool_t **pPool)
 	free(*pPool);
 	*pPool = NULL;
 }
+
+#endif /* ENABLE_FULMemoryPool */

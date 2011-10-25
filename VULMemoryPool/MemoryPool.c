@@ -70,7 +70,7 @@ void *Malloc(MemoryPool_t *pPool, unsigned short uSize)
 	unsigned short uIndex = GetIndex(uSize);
 	void *pPtr = NULL;
 
-/*	if (uSize > pPool->uMaxSize)
+	if (uSize > pPool->uMaxSize)
 	{
 		pPtr = malloc(sizeof(BigBlock_t) + sizeof(unsigned short) + uSize);
 		*((unsigned short *)(pPtr + sizeof(BigBlock_t))) = uSize;
@@ -78,12 +78,12 @@ void *Malloc(MemoryPool_t *pPool, unsigned short uSize)
 		pBigBlock->data = pPtr + sizeof(BigBlock_t) + sizeof(unsigned short);
 		pBigBlock->pNext = pPool->pFirstBigBlock;
 		pBigBlock->pPre = NULL;
-		pPool->pFirstBigBlock->pPre = pBigBlock;
+		(NULL != pPool->pFirstBigBlock) ? (pPool->pFirstBigBlock->pPre = pBigBlock) : 0;
 		pPool->pFirstBigBlock = pBigBlock;
 
 		return pBigBlock->data;
 	}
-*/
+
 	if (NULL != (pPool->pTable[uIndex]))
 	{
 		pPtr = (void *)&(pPool->pTable[uIndex]->data);
@@ -117,16 +117,15 @@ void Free(MemoryPool_t *pPool, void *pPtr)
 
 	pPtr -= sizeof(unsigned short);
 	unsigned short uSize = *((unsigned short *)pPtr);
-/*	if (uSize > pPool->uMaxSize)
+	if (uSize > pPool->uMaxSize)
 	{
-printf("free big block.\n");
 		pPtr -= sizeof(BigBlock_t);
 		BigBlock_t *pBigBlock = (BigBlock_t *)pPtr;
 		(NULL == pBigBlock->pPre) ? (pPool->pFirstBigBlock = pBigBlock->pNext)
 				                  : (pBigBlock->pPre->pNext = pBigBlock->pNext);
 		free(pPtr);
 		return;
-	}*/
+	}
 	unsigned short uIndex = GetIndex(uSize);
 	Node_t *pNode = (Node_t *)pPtr;
 	pNode->pNext = pPool->pTable[uIndex];

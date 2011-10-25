@@ -16,8 +16,8 @@
 
 #define MALLOC_MAX_LEN (1*1024)
 
-#define TEST_MALLOC_TIMES 9999
-#define TEST_RETRY_TIMES 9999
+#define TEST_MALLOC_TIMES 999
+#define TEST_RETRY_TIMES 999
 
 /**
  * @brief Test one kind of memory pool, enable it and program will test this kind of pool.

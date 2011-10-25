@@ -46,6 +46,15 @@ int VULMemoryPoolTester()
 			Free(pPool, pStrings[j]);
 		}
 	}
+	/*
+	 * The following code tests when wants to allocate a big block memory than pool can do, then deliver
+	 * action to system, and record this memory, when destroy memory pool, all allocated big block will
+	 * be release.
+	 */
+	/*for (int i=0; i<TEST_MALLOC_TIMES; ++i)
+	{
+		pStrings[i] = Malloc(pPool, sizeof(char) * (aStrLen[i] + MALLOC_MAX_LEN));
+	}*/
 	DestroyMemoryPool(&pPool);
 
 	gettimeofday(&endTime, NULL);

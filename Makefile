@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -std=c99 -O2 -g
 TARGET = ./memoryPoolTester
-SUBDIR = FABMemoryPool FALMemoryPool FUBMemoryPool VABMemoryPool VALMemoryPool VUBMemoryPool VULMemoryPool #FULMemoryPool
+SUBDIR = FABMemoryPool FALMemoryPool FUBMemoryPool VABMemoryPool VALMemoryPool VUBMemoryPool VULMemoryPool FULMemoryPool
 SOURCES = $(wildcard *.c) $(shell find $(SUBDIR) -name '*.c')
 OBJS = $(patsubst %.c, %.o, $(SOURCES))
 

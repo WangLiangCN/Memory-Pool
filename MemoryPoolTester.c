@@ -74,6 +74,7 @@ int SystemDefaultAllocatorTest_VarLen()
 		for (int j=0; j<TEST_MALLOC_TIMES; ++j)
 		{
 			pStrings[j] = malloc(sizeof(char)*(aStrLen[j] + 1));
+			//GenerateRandStr(pStrings[j], aStrLen[j]);
 			*pStrings[j] = '\0';
 			free(pStrings[j]);
 		}

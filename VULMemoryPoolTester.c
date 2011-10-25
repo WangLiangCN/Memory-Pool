@@ -5,7 +5,7 @@
  * @author WangLiang
  * @email  WangLiangCN@live.com
  *
- * @brief
+ * @brief  Test program for VULMemoryPool.
  */
 
 #include "VULMemoryPool/MemoryPool.h"
@@ -15,6 +15,9 @@
 
 #ifdef ENABLE_VULMemoryPool
 
+/**
+ * @brief Tester for VULMemoryPool.
+ */
 int VULMemoryPoolTester()
 {
 	// To compute used time.

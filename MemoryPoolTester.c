@@ -12,6 +12,9 @@
 #include <time.h>
 #include <sys/time.h>
 
+/**
+ * @brief Default system allocator's time counter, allocate fixed length of string every time.
+ */
 int SystemDefaultAllocatorTest_FixedLen()
 {
 	// To compute used time.
@@ -42,6 +45,9 @@ int SystemDefaultAllocatorTest_FixedLen()
 	return 0;
 }
 
+/**
+ * @brief Default system allocator's time counter, allocate variable length of string every time.
+ */
 int SystemDefaultAllocatorTest_VarLen()
 {
 	// To compute used time.

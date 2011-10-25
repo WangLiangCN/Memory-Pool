@@ -14,9 +14,19 @@
 #include "CProjectDfn.h"
 #include <time.h>
 
+/**
+ * @brief Longest length of string can allocate from pool.
+ */
 #define MALLOC_MAX_LEN (1*1024)
 
+/**
+ * @brief Allocate so many times from memory pool in a turn.
+ */
 #define TEST_MALLOC_TIMES 999
+
+/**
+ * @brief Test for so many turns in one test.
+ */
 #define TEST_RETRY_TIMES 999
 
 /**
@@ -40,13 +50,13 @@
  */
 inline void GenerateRandStr(char *str, int strLen)
 {
-  srand(time(NULL) + rand());
-  int i = 0;
-  for (; i  < strLen; i++)
-  {
-    str[i] = rand() %94 + 32;
-  }
-  str[i] = '\0';
+	srand(time(NULL) + rand());
+	int i = 0;
+	for (; i  < strLen; i++)
+	{
+		str[i] = rand() %94 + 32;
+	}
+	str[i] = '\0';
 }
 
 extern int FULMemoryPoolTester();

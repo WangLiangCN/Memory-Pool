@@ -14,14 +14,25 @@
 
 #include "MemoryPool.h"
 
+/**
+ * @brief Create memory pool, so can allocate memory after that.
+ *
+ * It doesn't means can't get memory if bigger than given size, pool will deliver to system functions,
+ * so that performance is equal as system. When destroy pool, make sure you have release all memory block
+ * smaller than [uMaxStrLen], pool doesn't track them, if bigger than [uMaxStrLen], pool will release all
+ * of them to prevent memory leak.
+ *
+ * @param uMaxStrLen Max length of string this pool can allocate.
+ * @return Created memory pool.
+ */
 MemoryPool_t *CreateMemoryPool(unsigned short uMaxStrLen)
 {
 	unsigned short uFreeTableLen = GetIndex(uMaxStrLen) + 1;
 
-	MemoryPool_t *pPool = (MemoryPool_t *)malloc(sizeof(MemoryPool_t));
+	MemoryPool_t *pPool = (MemoryPool_t *)malloc(sizeof(MemoryPool_t) + (sizeof(BlockTable_t) * uFreeTableLen));
 	pPool->uMaxSize = uMaxStrLen > MAX_STRING_LEN ? MAX_STRING_LEN : uMaxStrLen;
 	pPool->pFirstBigBlock = NULL;
-	pPool->pTable = (BlockTable_t *)malloc(sizeof(BlockTable_t) * uFreeTableLen);
+	pPool->pTable = (BlockTable_t *)((void *)pPool + sizeof(MemoryPool_t));
 	for (int i=0; i<uFreeTableLen; ++i)
 	{
 		pPool->pTable[i] = NULL;
@@ -30,6 +41,12 @@ MemoryPool_t *CreateMemoryPool(unsigned short uMaxStrLen)
 	return pPool;
 }
 
+/**
+ * @brief Destroy memory pool, release all idle memory block smaller than max size pool can allocate, and
+ * release all blocks bigger than this size not matter using or not.
+ *
+ * @param pPool Which pool to destroy, set to NULL when finished to destroy.
+ */
 void DestroyMemoryPool(MemoryPool_t **pPool)
 {
 	assert(NULL != *pPool);
@@ -38,6 +55,7 @@ void DestroyMemoryPool(MemoryPool_t **pPool)
 	BigBlock_t *pCurrBlock = NULL;
 	BigBlock_t *pPreBlock = NULL;
 
+	// Release idle blocks in pool.
 	unsigned short uFreeTableLen = GetIndex((*pPool)->uMaxSize) + 1;
 	for (int i=0; i<uFreeTableLen; ++i)
 	{
@@ -49,8 +67,8 @@ void DestroyMemoryPool(MemoryPool_t **pPool)
 			free(pPreNode);
 		}
 	}
-	free((*pPool)->pTable);
 
+	// Release block which bigger than pool can allocate.
 	pCurrBlock = (*pPool)->pFirstBigBlock;
 	while(NULL != pCurrBlock)
 	{
@@ -59,10 +77,18 @@ void DestroyMemoryPool(MemoryPool_t **pPool)
 		free(pPreBlock);
 	}
 
+	// Release pool.
 	free(*pPool);
 	*pPool = NULL;
 }
 
+/**
+ * @biref Get a memory block from pool.
+ *
+ * @param pPool From which pool to get.
+ * @param uSize Size of string want to allocate.
+ * @return Allocated memory.
+ */
 void *Malloc(MemoryPool_t *pPool, unsigned short uSize)
 {
 	assert(NULL != pPool);
@@ -70,6 +96,7 @@ void *Malloc(MemoryPool_t *pPool, unsigned short uSize)
 	unsigned short uIndex = GetIndex(uSize);
 	void *pPtr = NULL;
 
+	// If user want to allocate a memory bigger than pool can do, deliver this to system and record it.
 	if (uSize > pPool->uMaxSize)
 	{
 		pPtr = malloc(sizeof(BigBlock_t) + sizeof(unsigned short) + uSize);
@@ -84,6 +111,7 @@ void *Malloc(MemoryPool_t *pPool, unsigned short uSize)
 		return pBigBlock->data;
 	}
 
+	// Check if there are idle blocks can be use again, or allocate new blocks from system.
 	if (NULL != (pPool->pTable[uIndex]))
 	{
 		pPtr = (void *)&(pPool->pTable[uIndex]->data);
@@ -93,7 +121,9 @@ void *Malloc(MemoryPool_t *pPool, unsigned short uSize)
 	}
 	else
 	{
-		pPtr = malloc(sizeof(unsigned short) + RoundUp(uSize));
+		unsigned short uLen = sizeof(unsigned short) + RoundUp(uSize);
+		uLen = (uLen > sizeof(Node_t)) ? uLen : sizeof(Node_t);
+		pPtr = malloc(uLen);
 		if (NULL == pPtr)
 		{
 			PrintError("Failed to malloc memory from system.");
@@ -106,6 +136,12 @@ void *Malloc(MemoryPool_t *pPool, unsigned short uSize)
 	return pPtr;
 }
 
+/**
+ * @brief Back a memory block to pool so that it can be use again.
+ *
+ * @param pPool Back to which pool.
+ * @param pPtr Address of memory block to back.
+ */
 void Free(MemoryPool_t *pPool, void *pPtr)
 {
 	if (NULL == pPool)
@@ -115,6 +151,7 @@ void Free(MemoryPool_t *pPool, void *pPtr)
 		return;
 	}
 
+	// Check if big blocks allocated from system directly, if so, release it to system, pool won't use it.
 	pPtr -= sizeof(unsigned short);
 	unsigned short uSize = *((unsigned short *)pPtr);
 	if (uSize > pPool->uMaxSize)
@@ -126,6 +163,7 @@ void Free(MemoryPool_t *pPool, void *pPtr)
 		free(pPtr);
 		return;
 	}
+	// Back the memory block to pool so that can use it again.
 	unsigned short uIndex = GetIndex(uSize);
 	Node_t *pNode = (Node_t *)pPtr;
 	pNode->pNext = pPool->pTable[uIndex];

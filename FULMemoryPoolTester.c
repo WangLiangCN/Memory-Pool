@@ -13,6 +13,9 @@
 
 #ifdef ENABLE_FULMemoryPool
 
+/**
+ * @brief Tester for FULMemoryPool.
+ */
 int FULMemoryPoolTester()
 {
 	// To compute used time.

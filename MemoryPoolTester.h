@@ -34,8 +34,8 @@
  * @note Enable one of them at one time.
  */
 //#define ENABLE_FULMemoryPool
-#define ENABLE_VULMemoryPool
-//#define ENABLE_FALMemoryPool
+//#define ENABLE_VULMemoryPool
+#define ENABLE_FALMemoryPool
 //#define ENABLE_VALMemoryPool
 //#define ENABLE_FUBMemoryPool
 //#define ENABLE_VUBMemoryPool
@@ -61,5 +61,7 @@ inline void GenerateRandStr(char *str, int strLen)
 
 extern int FULMemoryPoolTester();
 extern int VULMemoryPoolTester();
+extern int FALMemoryPoolTester();
+extern int VALMemoryPoolTester();
 
 #endif /* MEMORY_POOL_TESTER_H */

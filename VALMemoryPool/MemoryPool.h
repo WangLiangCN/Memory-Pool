@@ -1,21 +1,21 @@
 /**
- * @file   VULMemoryPool/MemoryPool.h
+ * @file   VALMemoryPool/MemoryPool.h
  *
  * @date   Oct 20, 2011
  * @author WangLiang
  * @email  WangLiangCN@live.com
  *
- * @brief  Variable length, Unable to recycle, List style memory pool.
+ * @brief  Variable length, Able to recycle, List style memory pool.
  *
  * Data structure:
  *
  * MemoryPool_t             0      align   2*align   3*align   4*align   5*align           (n-1)*align
  * +--------+          ~align   ~2*align  ~3*align  ~4*align  ~5*align  ~6*align    ...    ~n*align
  * |        |       +---------+---------+---------+---------+---------+---------+---------+-----------+
- * | pTable |  -->  | NotUsed | NotUsed | NotUsed | NotUsed |   NULL  | NotUsed |   ...   |  NotUsed  |
+ * | pTable |  -->  |   Head  |   Head  |   Head  |   Head  |   Head  |   Head  |   ...   |    Head   |
  * |        |       +---------+---------+---------+---------+---------+---------+---------+-----------+
- * |        |           |          |         |         |                   |                    |
- * +--------+        +------+  +------+   +------+  +------+             NULL               +------+
+ * |        |           |          |         |         |         |         |                    |
+ * +--------+        +------+  +------+   +------+  +------+   NULL      NULL               +------+
  * |        |        | Not  |  | Not  |   | Not  |  | Not  |                                | Not  |
  * |  uMax  |        | Used |  | Used |   | Used |  | Used |                                | Used |
  * |  Size  |        +------+  +------+   +------+  +------+                                +------+
@@ -57,6 +57,11 @@
 #define ALIGN_SIZE 8
 
 /**
+ * @brief Maximum number of idle block in memory pool, if more than these, release them.
+ */
+#define RECYCLE_IF_MORETHAN_BLOCKS 16
+
+/**
  * @brief Allocate size of memory, if it not used, let the first four block save the pointer pointed to
  * next free allocated memory, if this memory are using, [data] is the first address of this memory.
  */
@@ -67,9 +72,18 @@ typedef union Node
 }Node_t;
 
 /**
+ * @brief Head of list of each idle memory block. If more than a given number of idle blocks, release them.
+ */
+typedef struct ListHead
+{
+	Node_t *pFirstNode;      ///< First idle memory block.
+	unsigned int uIdleNum;   ///< Number of idle memory blocks in list.
+}Head_t;
+
+/**
  * @brief Block table is an array, each elements pointed to a list which describes the free memory block.
  */
-typedef Node_t* BlockTable_t;
+typedef Head_t BlockTable_t;
 
 /**
  * @brief Memory pool have it's biggest size, if user asked to allocate a big block bigger than memory

@@ -1,16 +1,16 @@
 /**
- * @file   VULMemoryPool/MemoryPool.c
+ * @file   VALMemoryPool/MemoryPool.c
  *
  * @date   Oct 20, 2011
  * @author WangLiang
  * @email  WangLiangCN@live.com
  *
- * @brief  Variable length, Unable to recycle, List style memory pool.
+ * @brief  Variable length, Able to recycle, List style memory pool.
  */
 
 // The following macro designed for test purpose only, delete it when using.
 #include "../MemoryPoolTester.h"
-#ifdef ENABLE_VULMemoryPool
+#ifdef ENABLE_VALMemoryPool
 
 #include "MemoryPool.h"
 
@@ -30,13 +30,14 @@ MemoryPool_t *CreateMemoryPool(unsigned short uMaxStrLen)
 	uMaxStrLen = (uMaxStrLen > MAX_STRING_LEN) ? MAX_STRING_LEN : uMaxStrLen;
 	unsigned short uFreeTableLen = GetIndex(uMaxStrLen) + 1;
 
-	MemoryPool_t *pPool = (MemoryPool_t *)malloc(sizeof(MemoryPool_t) + (sizeof(BlockTable_t) * uFreeTableLen));
+	MemoryPool_t *pPool = (MemoryPool_t *)malloc(sizeof(MemoryPool_t) + (sizeof(Head_t) * uFreeTableLen));
 	pPool->uMaxSize = uMaxStrLen;
 	pPool->pFirstBigBlock = NULL;
 	pPool->pTable = (BlockTable_t *)((void *)pPool + sizeof(MemoryPool_t));
 	for (int i=0; i<uFreeTableLen; ++i)
 	{
-		pPool->pTable[i] = NULL;
+		pPool->pTable[i].pFirstNode = NULL;
+		pPool->pTable[i].uIdleNum = 0;
 	}
 
 	return pPool;
@@ -60,7 +61,7 @@ void DestroyMemoryPool(MemoryPool_t **pPool)
 	unsigned short uFreeTableLen = GetIndex((*pPool)->uMaxSize) + 1;
 	for (int i=0; i<uFreeTableLen; ++i)
 	{
-		pCurrNode = (*pPool)->pTable[i];
+		pCurrNode = (*pPool)->pTable[i].pFirstNode;
 		while(NULL != pCurrNode)
 		{
 			pPreNode = pCurrNode;
@@ -113,10 +114,11 @@ void *Malloc(MemoryPool_t *pPool, unsigned short uSize)
 	}
 
 	// Check if there are idle blocks can be use again, or allocate new blocks from system.
-	if (NULL != (pPool->pTable[uIndex]))
+	if (NULL != (pPool->pTable[uIndex].pFirstNode))
 	{
-		pPtr = (void *)&(pPool->pTable[uIndex]->data);
-		pPool->pTable[uIndex] = pPool->pTable[uIndex]->pNext;
+		pPtr = (void *)&(pPool->pTable[uIndex].pFirstNode->data);
+		pPool->pTable[uIndex].pFirstNode = pPool->pTable[uIndex].pFirstNode->pNext;
+		-- (pPool->pTable[uIndex].uIdleNum);
 		*(unsigned short *)pPtr = uSize;
 		pPtr += sizeof(unsigned short);
 	}
@@ -164,11 +166,19 @@ void Free(MemoryPool_t *pPool, void *pPtr)
 		free(pPtr);
 		return;
 	}
-	// Back the memory block to pool so that can use it again.
+
+	// Check if needs to release it due to too many idle blocks in list.
 	unsigned short uIndex = GetIndex(uSize);
+	if ((pPool->pTable[uIndex].uIdleNum + 1) > RECYCLE_IF_MORETHAN_BLOCKS)
+	{
+		free(pPtr);
+		return;
+	}
+	// Back the memory block to pool so that can use it again.
 	Node_t *pNode = (Node_t *)pPtr;
-	pNode->pNext = pPool->pTable[uIndex];
-	pPool->pTable[uIndex] = pNode;
+	pNode->pNext = pPool->pTable[uIndex].pFirstNode;
+	pPool->pTable[uIndex].pFirstNode = pNode;
+	++ (pPool->pTable[uIndex].uIdleNum);
 }
 
-#endif /* ENABLE_VULMemoryPool */
+#endif /* ENABLE_VALMemoryPool */

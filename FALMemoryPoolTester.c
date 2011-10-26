@@ -26,7 +26,7 @@ int FALMemoryPoolTester()
 	char **pStrings = (char **)malloc(sizeof(char *) * TEST_MALLOC_TIMES);
 
 	// Memory pool Malloc/Free test.
-	PrintLog("Now testing memory pool Malloc/Free, FUL memory pool.");
+	PrintLog("Now testing memory pool Malloc/Free, FAL memory pool.");
 	gettimeofday(&startTime, NULL);
 
 	MemoryPool_t *pPool = CreateMemoryPool(MALLOC_MAX_LEN);

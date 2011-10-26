@@ -7,8 +7,8 @@
  * @brief  Test program for FALMemoryPool.
  */
 
-#include "FALMemoryPool/MemoryPool.h"
-#include "MemoryPoolTester.h"
+#include "../FALMemoryPool/MemoryPool.h"
+#include "../MemoryPoolTester.h"
 #include <sys/time.h>
 
 #ifdef ENABLE_FALMemoryPool

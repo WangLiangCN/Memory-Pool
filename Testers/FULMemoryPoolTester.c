@@ -7,8 +7,8 @@
  * @brief  Test program for FULMemoryPool.
  */
 
-#include "FULMemoryPool/MemoryPool.h"
-#include "MemoryPoolTester.h"
+#include "../FULMemoryPool/MemoryPool.h"
+#include "../MemoryPoolTester.h"
 #include <sys/time.h>
 
 #ifdef ENABLE_FULMemoryPool

@@ -8,8 +8,8 @@
  * @brief  Test program for VALMemoryPool.
  */
 
-#include "VALMemoryPool/MemoryPool.h"
-#include "MemoryPoolTester.h"
+#include "../VALMemoryPool/MemoryPool.h"
+#include "../MemoryPoolTester.h"
 #include <time.h>
 #include <sys/time.h>
 

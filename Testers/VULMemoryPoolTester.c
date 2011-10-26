@@ -8,8 +8,8 @@
  * @brief  Test program for VULMemoryPool.
  */
 
-#include "VULMemoryPool/MemoryPool.h"
-#include "MemoryPoolTester.h"
+#include "../VULMemoryPool/MemoryPool.h"
+#include "../MemoryPoolTester.h"
 #include <time.h>
 #include <sys/time.h>
 

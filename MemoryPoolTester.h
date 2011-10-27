@@ -34,10 +34,10 @@
  * @note Enable one of them at one time.
  */
 //#define ENABLE_FULMemoryPool
-#define ENABLE_VULMemoryPool
+//#define ENABLE_VULMemoryPool
 //#define ENABLE_FALMemoryPool
 //#define ENABLE_VALMemoryPool
-//#define ENABLE_FUBMemoryPool
+#define ENABLE_FUBMemoryPool
 //#define ENABLE_VUBMemoryPool
 //#define ENABLE_FABMemoryPool
 //#define ENABLE_VABMemoryPool
@@ -63,5 +63,6 @@ extern int FULMemoryPoolTester();
 extern int VULMemoryPoolTester();
 extern int FALMemoryPoolTester();
 extern int VALMemoryPoolTester();
+extern int FUBMemoryPoolTester();
 
 #endif /* MEMORY_POOL_TESTER_H */

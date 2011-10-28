@@ -1,16 +1,16 @@
 /**
  * @file   MemoryPool.c
  *
- * @date   Oct 26, 2011
+ * @date   Oct 28, 2011
  * @author WangLiang
  * @email  WangLiangCN@live.com
  *
- * @brief  Fixed length, Unable to recycle, Block store style memory pool.
+ * @brief  Fixed length, Able to recycle, Block store style memory pool.
  */
 
 // The following macro designed for test purpose only, delete it when using.
 #include "../MemoryPoolTester.h"
-#ifdef ENABLE_FUBMemoryPool
+#ifdef ENABLE_FABMemoryPool
 
 #include "MemoryPool.h"
 
@@ -206,15 +206,44 @@ inline char CheckInChunk(MemoryPool_t *pPool, MemoryChunk_t *pChunk, void *pPtr)
 }
 
 /**
- * @brief Back a memory block to memory pool.
+ * @brief Check all blocks in chunk is available.
+ *
+ * @param pChunk Which chunk you want to check.
+ * @return If all blocks in chunk is available, 1 will be returned, or 0 will be returned
+ * including NULL pointer.
+ */
+inline char CheckChunkEmpty(MemoryChunk_t *pChunk)
+{
+	return ((NULL != pChunk) && (pChunk->uBlocks == pChunk->uBlocksAvailable_));
+}
+
+/**
+ * @brief Check a chunk is full or not, if full, there is no block is available.
+ *
+ * @param pChunk Which chunk you want to check.
+ * @return If chunk not full, there is available blocks, 1 will be returned, or 0 will be returned.
+ */
+inline char CheckChunkNotFull(MemoryChunk_t *pChunk)
+{
+	return ((NULL != pChunk) && (0 != pChunk->uBlocksAvailable_));
+}
+
+/**
+ * @brief Back a memory block to memory pool, if all blocks in a chunk is available, then move it to the
+ * first chunk in pool, if the second chunk not full, then release the first chunk to system.
+ *
+ * @param pPool Back the memory block to which pool.
+ * @param pPtr Which memory block to give back.
  */
 void Free(MemoryPool_t *pPool, void *pPtr)
 {
 	MemoryChunk_t *pChunk = pPool->pFirstChunk;
+	MemoryChunk_t *pPreChunk = NULL;
 
 	// Check the block in which chunk.
 	while(pChunk && !CheckInChunk(pPool, pChunk, pPtr))
 	{
+		pPreChunk = pChunk;
 		pChunk = pChunk->pNextChunk;
 	}
 
@@ -230,6 +259,23 @@ void Free(MemoryPool_t *pPool, void *pPtr)
 	*(unsigned short *)pPtr = pChunk->uFirstAvailable_;
 	pChunk->uFirstAvailable_ = (unsigned short)
 			(((unsigned long)pPtr - (unsigned long)GetFirstBlockFromChunk(pChunk)) / pPool->uBlockSize);
+
+	// Check if chunk is empty, all blocks is available in it, move it to the first chunk, if the second
+	// chunk is not full, then release this chunk to system.
+	if (CheckChunkEmpty(pChunk))
+	{
+		if (pChunk != pPool->pFirstChunk)
+		{
+			pPreChunk->pNextChunk = pChunk->pNextChunk;
+			pChunk->pNextChunk = pPool->pFirstChunk;
+			pPool->pFirstChunk = pChunk;
+		}
+		if (CheckChunkNotFull(pPool->pFirstChunk->pNextChunk))
+		{
+			pPool->pFirstChunk = pChunk->pNextChunk;
+			free(pChunk);
+		}
+	}
 }
 
-#endif /* ENABLE_FUBMemoryPool */
+#endif /* ENABLE_FABMemoryPool */

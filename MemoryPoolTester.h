@@ -22,12 +22,12 @@
 /**
  * @brief Allocate so many times from memory pool in a turn.
  */
-#define TEST_MALLOC_TIMES 999
+#define TEST_MALLOC_TIMES 9999
 
 /**
  * @brief Test for so many turns in one test.
  */
-#define TEST_RETRY_TIMES 999
+#define TEST_RETRY_TIMES 99
 
 /**
  * @brief Test one kind of memory pool, enable it and program will test this kind of pool.
@@ -37,9 +37,9 @@
 //#define ENABLE_VULMemoryPool
 //#define ENABLE_FALMemoryPool
 //#define ENABLE_VALMemoryPool
-#define ENABLE_FUBMemoryPool
+//#define ENABLE_FUBMemoryPool
+#define ENABLE_FABMemoryPool
 //#define ENABLE_VUBMemoryPool
-//#define ENABLE_FABMemoryPool
 //#define ENABLE_VABMemoryPool
 
 /**
@@ -59,10 +59,14 @@ inline void GenerateRandStr(char *str, int strLen)
 	str[i] = '\0';
 }
 
+/**
+ * @brief Memory pool tester.
+ */
 extern int FULMemoryPoolTester();
 extern int VULMemoryPoolTester();
 extern int FALMemoryPoolTester();
 extern int VALMemoryPoolTester();
 extern int FUBMemoryPoolTester();
+extern int FABMemoryPoolTester();
 
 #endif /* MEMORY_POOL_TESTER_H */

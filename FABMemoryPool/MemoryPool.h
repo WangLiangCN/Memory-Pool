@@ -1,11 +1,11 @@
 /**
  * @file   MemoryPool.h
  *
- * @date   Oct 26, 2011
+ * @date   Oct 28, 2011
  * @author WangLiang
  * @email  WangLiangCN@live.com
  *
- * @brief  Fixed length, Unable to recycle, Block store style memory pool.
+ * @brief  Fixed length, Able to recycle, Block store style memory pool.
  *
  * Data structure:
  *
@@ -113,7 +113,11 @@ extern void DestroyMemoryPool(MemoryPool_t **pPool);
 extern void *Malloc(MemoryPool_t *pPool);
 
 /**
- * @brief Back a memory block to memory pool.
+ * @brief Back a memory block to memory pool, if all blocks in a chunk is available, then move it to the
+ * first chunk in pool, if the second chunk is same to it, then release the first chunk to system.
+ *
+ * @param pPool Back the memory block to which pool.
+ * @param pPtr Which memory block to give back.
  */
 extern void Free(MemoryPool_t *pPool, void *pPtr);
 

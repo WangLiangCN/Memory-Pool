@@ -46,7 +46,7 @@ int FUBMemoryPoolOrderingTester()
 	char **pStrings = (char **)malloc(sizeof(char *) * TEST_MALLOC_TIMES);
 
 	// Memory pool Malloc/Free test.
-	PrintLog("Now testing memory pool Malloc/Free, FUL memory pool.");
+	PrintLog("Now testing memory pool Malloc/Free, FUB memory pool.");
 	gettimeofday(&startTime, NULL);
 
 	MemoryPool_t *pPool = CreateMemoryPool(MALLOC_MAX_LEN, FIRST_CHUNK_BLOCKS, GROW_CHUNK_BLOCKS);
@@ -59,6 +59,10 @@ int FUBMemoryPoolOrderingTester()
 			//GenerateRandStr(pStrings[j], MALLOC_MAX_LEN-1);
 			Free(pPool, pStrings[j]);
 		}
+		/*for (int j=0; j<TEST_MALLOC_TIMES; ++j)
+		{
+			Free(pPool, pStrings[j]);
+		}*/
 	}
 	DestroyMemoryPool(&pPool);
 
@@ -73,6 +77,8 @@ int FUBMemoryPoolOrderingTester()
 
 /**
  * @brief Tester for FULMemoryPool, allocate, random free and random allocate again and again.
+ * @note  This test is just for function test, test function works well in every condition,time test
+ * is meaningless.
  */
 int FUBMemoryPoolRandomTester()
 {
@@ -96,7 +102,8 @@ int FUBMemoryPoolRandomTester()
 	}
 
 	// Memory pool Malloc/Free test.
-	PrintLog("Now testing memory pool Malloc/Free, FUL memory pool.");
+	PrintLog("Now testing memory pool Malloc/Free, FUB memory pool.");
+	PrintLog("Note: This test is just for function test, time test is meaningless.");
 	gettimeofday(&startTime, NULL);
 
 	MemoryPool_t *pPool = CreateMemoryPool(MALLOC_MAX_LEN, FIRST_CHUNK_BLOCKS, GROW_CHUNK_BLOCKS);
@@ -104,7 +111,7 @@ int FUBMemoryPoolRandomTester()
 	{
 		for (int j=0; j<TEST_MALLOC_TIMES; ++j)
 		{
-			if ((aRandom[j] + 1) % 2)
+			if (aRandom[j] % 2)
 			{
 				pStrings[j] = (char *)Malloc(pPool);
 				*pStrings[j] = '\0';
@@ -112,7 +119,7 @@ int FUBMemoryPoolRandomTester()
 		}
 		for (int j=0; j<TEST_MALLOC_TIMES; ++j)
 		{
-			if ((aRandom[j] % 2) && pStrings[j])
+			if ((aRandom[j] % 3) && pStrings[j])
 			{
 				Free(pPool, pStrings[j]);
 				pStrings[j] = NULL;

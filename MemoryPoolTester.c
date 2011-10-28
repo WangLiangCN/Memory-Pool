@@ -93,7 +93,7 @@ int main()
 {
 	int ret;
 
-#if defined(ENABLE_FULMemoryPool) || defined (ENABLE_FALMemoryPool) || defined (ENABLE_FABMemoryPool)
+#if defined(ENABLE_FULMemoryPool) || defined (ENABLE_FALMemoryPool) || defined (ENABLE_FABMemoryPool) || defined (ENABLE_FUBMemoryPool)
 	SystemDefaultAllocatorTest_FixedLen();
 #else
 	SystemDefaultAllocatorTest_VarLen();

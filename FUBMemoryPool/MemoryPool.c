@@ -85,14 +85,14 @@ inline void *GetFirstBlockFromChunk(MemoryChunk_t *pChunk)
 inline MemoryChunk_t *AllocateNewChunkInit(unsigned short uBlocks, unsigned short uBlockSize)
 {
 	MemoryChunk_t *pChunk = (MemoryChunk_t *)malloc(sizeof(MemoryChunk_t) + uBlocks * uBlockSize);
-	if (NULL != pChunk)
+	if (NULL == pChunk)
 	{
 		return NULL;
 	}
 
 	pChunk->uBlocksAvailable_ = uBlocks;
 	pChunk->uFirstAvailable_ = 0;
-	pChunk->uChunkSize = uBlocks * uBlockSize;
+	pChunk->uBlocks = uBlocks;
 	pChunk->pNextChunk = NULL;
 
 	// Initialize this chunk, create idle index.
@@ -142,7 +142,7 @@ void *Malloc(MemoryPool_t *pPool)
 	{
 		// All chunk is full, needs to create a new chunk.
 		// Check if forbidden to extend memory pool, if so, return NULL.
-		if (!pPool->uGrowSize)
+		if (!pPool->uGrowChunkBlocks)
 		{
 			PrintWarning("No blocks in pool and not allowed to automatically grow.");
 			return NULL;
@@ -169,18 +169,30 @@ void *Malloc(MemoryPool_t *pPool)
 }
 
 /**
- * @brief Check a block is in given chunk.
+ * @brief Get the end address of a chunk.
  *
+ * @param pPool Which pool is the chunk in.
+ * @param pChunk Which the chunk's end address want to get.
+ * @return End address of a chunk.
+ */
+inline void *GetEndOfChunk(MemoryPool_t *pPool, MemoryChunk_t *pChunk)
+{
+	return ((void *)GetFirstBlockFromChunk(pChunk) + pChunk->uBlocks * pPool->uBlockSize);
+}
+
+/**
+ * @brief Check a block whether in given chunk and memory pool.
+ *
+ * @param pPool The chunk in which pool.
  * @param pChunk Check block if in this chunk.
  * @param pPtr Check this block.
  * @return If block in this chunk, 1 will be returned, or 0 is returned.
  */
-inline char CheckInChunk(MemoryChunk_t *pChunk, void *pPtr)
+inline char CheckInChunk(MemoryPool_t *pPool, MemoryChunk_t *pChunk, void *pPtr)
 {
 	char result = 1;
-	result &= (NULL != pChunk);
 	result &= ((unsigned long)pPtr >= (unsigned long)GetFirstBlockFromChunk(pChunk));
-	result &= ((unsigned long)pPtr < ((unsigned long)GetFirstBlockFromChunk(pChunk) + pChunk->uChunkSize));
+	result &= ((unsigned long)pPtr < (unsigned long)GetEndOfChunk(pPool, pChunk));
 
 	return result;
 }
@@ -193,13 +205,13 @@ void Free(MemoryPool_t *pPool, void *pPtr)
 	MemoryChunk_t *pChunk = pPool->pFirstChunk;
 
 	// Check the block in which chunk.
-	while(!CheckInChunk(pChunk, pPtr))
+	while(pChunk && !CheckInChunk(pPool, pChunk, pPtr))
 	{
 		pChunk = pChunk->pNextChunk;
 	}
 
 	// If memory block not belongs to any chunk.
-	if (NULL != pChunk)
+	if (NULL == pChunk)
 	{
 		PrintWarning("Not found this memory block in pool.");
 		return;

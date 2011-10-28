@@ -15,7 +15,7 @@
  * +-----------------+   |      +-----------------+   |      +-----------------+    |
  * |uFirstChunkBlocks|   |  --- |uFirstAvailable_ |   |  --- |uFirstAvailable_ |    |
  * +-----------------+   |  |   +-----------------+   |  |   +-----------------+    |
- * |uGrowChunkBlocks |   |  |   |    uChunkSize   |   |  |   |    uChunkSize   |    |
+ * |uGrowChunkBlocks |   |  |   |     uBlocks     |   |  |   |     uBlocks     |    |
  * +-----------------+   |  |   +-----------------+   |  |   +-----------------+    |
  * |   pFirstChunk   | ---  |   |    pNextChunk   | ---  |   |    pNextChunk   |  ---
  * +-----------------+      |   +-----------------+      |   +-----------------+
@@ -23,13 +23,13 @@
  *                          |   +-----------------+      |   +-----------------+
  *                          |   |ThisBlockIsUsingN|      --> |I|   Block[x]    | ---
  *                          |   +-----------------+          +-----------------+   |
- *                          --> |I|   Block[m]    | ---  --- |I|   Block[x+1]  | <--
- *                              +-----------------+   |  |   +-----------------+
- *                              |ThisBlockIsUsingN|   |  |   |ThisBlockIsUsingN|
- *                              +-----------------+   |  |   +-----------------+
- *                              |ThisBlockIsUsingN|   |  |   |     ......      |
- *                              +-----------------+   |  |   +-----------------+
- *                              |     ......      |   |  --> |I|   Block[y+1]  |
+ *                          --> |I|   Block[m]    | ---  --> |I|   Block[x+1]  |   |
+ *                              +-----------------+   |  |   +-----------------+   |
+ *                              |ThisBlockIsUsingN|   |  |   |ThisBlockIsUsingN|   |
+ *                              +-----------------+   |  |   +-----------------+   |
+ *                              |ThisBlockIsUsingN|   |  |   |     ......      |   |
+ *                              +-----------------+   |  |   +-----------------+   |
+ *                              |     ......      |   |  --- |I|   Block[y+1]  | <--
  *                              +-----------------+   |      +-----------------+
  *                              |I|  Block[n]     | <--
  *                              +-----------------+
@@ -62,7 +62,7 @@ typedef struct MemoryChunk
 {
 	unsigned short uBlocksAvailable_;  ///< How many blocks available in this chunk.
 	unsigned short uFirstAvailable_;   ///< The index of first available chunk.
-	unsigned short uChunkSize;         ///< Total size of blocks in this chunk, related to number of blocks.
+	unsigned short uBlocks;            ///< Total size of blocks in this chunk, related to number of blocks.
 	struct MemoryChunk *pNextChunk;    ///< Pointer to next chunk, this make up a chunk list.
 }MemoryChunk_t;
 
